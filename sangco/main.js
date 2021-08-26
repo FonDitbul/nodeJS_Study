@@ -16,6 +16,7 @@ const session = require('express-session')
 //session store library
 const LokiStore = require('connect-loki')(session);
 
+const db = require('./lib/db')
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:false}))
@@ -38,10 +39,12 @@ const loginRouter = require('./routes/login')(passport);
 
 // get 방식만 사용함
 app.get('*',function(request, response, next){
-    fs.readdir('./data', function(error , filelist){
-        request.list = filelist;
-        next();
-    })
+    request.list = db.get('topics').value();
+    next();
+    // fs.readdir('./data', function(error , filelist){
+    //     request.list = filelist;
+    //     next();
+    // })
 })
 
 app.use('/', indexRouter);

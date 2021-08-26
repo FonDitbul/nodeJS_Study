@@ -20,8 +20,8 @@ module.exports = {
         let list = '<ul>'
         // console.log(filelist)
         filelist.forEach(index=>{
-            // console.log(index)
-            list += `<li><a href="/topic/${index}">${index}</a></li>`
+            console.log(index)
+            list += `<li><a href="/topic/${index.id}">${index.title}</a></li>`
         })
         list = list+'</ul>'
         return list
