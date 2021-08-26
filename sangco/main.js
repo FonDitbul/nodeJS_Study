@@ -14,9 +14,7 @@ const session = require('express-session')
 //session 값 저장을 위한 새로운 store 모듈 설치 필요
 // const FileStore = require('session-file-store')(session) //에러로 인한 삭제
 
-const indexRouter = require('./routes/index')
-const topicRouter = require('./routes/topic')
-const loginRouter = require('./routes/login')
+
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:false}))
@@ -31,6 +29,10 @@ app.use(session({
 }))
 
 const passport = require('./lib/passport')(app)
+
+const indexRouter = require('./routes/index')
+const topicRouter = require('./routes/topic')
+const loginRouter = require('./routes/login')(passport);
 
 // get 방식만 사용함
 app.get('*',function(request, response, next){
