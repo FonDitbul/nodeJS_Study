@@ -43,7 +43,6 @@ app.use(passport.session())
 
 passport.serializeUser(function(user, done){
     console.log(user.email)
-
     done(null, user.email);
 })
 passport.deserializeUser(function(id, done){
