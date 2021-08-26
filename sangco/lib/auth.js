@@ -7,7 +7,8 @@ module.exports = {
         }
     },
     statusUI:function (req,res){
-        let authStatusUI = '<a href="/login">login</a>'
+        let authStatusUI = '<a href="/login">login</a> ' +
+            '| <a href="/login/register">Register</a>'
         if(this.isOwner(req,res)) {
             authStatusUI = `${req.user.nickname} | <a href="/login/logout_process">logout</a>`
         }
