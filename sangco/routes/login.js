@@ -5,8 +5,15 @@ module.exports = function(passport){
     const template = require('../template')
     const cookie = require('cookie-parser')
 
+    //lowdb를 사용하는 방법
+    let low = require('lowdb')
+    const FileSync = require('lowdb/adapters/FileSync')
+    const adapter = new FileSync('db.json')
+    const db = low(adapter);
+    db.defaults({users:[]}).write();
+
     router.get('/', (req,res)=>{
-        var title = 'Login';
+        var title = `Login`;
         let list = template.List(req.list)
         let formTag = '' + // post 방식으로 서버에 데이터 전송하는 태그
             '<form action="/login/login_process" method="post">' +
@@ -46,6 +53,20 @@ module.exports = function(passport){
 
         var templateStr = template.HTML(title, list, tempBody, control)
         res.send(templateStr)
+    })
+
+    router.post('/register_process', (req,res)=>{
+        var post = req.body
+        var email = post.email;
+        var nickname = post.nickname
+        var password = post.password;
+        var password2 = post.password2
+
+        db.get('users').push({
+            email:email,
+            nickname: nickname,
+            password:password
+        }).write();
     })
 
     router.post('/login_process',
