@@ -1,4 +1,6 @@
 const db = require('../lib/db')
+const bcrypt = require('bcrypt');
+
 
 module.exports = function(app) {
     // const authData = {
@@ -30,16 +32,23 @@ module.exports = function(app) {
             passwordField: 'password'
         },
         function (email, password, done) {
-            console.log('LocalStrategy', email, password);
+            // console.log('LocalStrategy', email, password);
             let user = db.get('users').find({
                 email:email,
-                password:password
             }).value();
             if(user){
-                return done(null, user);
+                bcrypt.compare(password, user.password, function(err, result){
+                    if(result){
+                        return done(null, user);
+                    }else{
+                        return done(null, false, {
+                            message: 'Incorrect password'
+                        })
+                    }
+                })
             }else{
                 return done(null, false, {
-                    message: 'Incorrect.'
+                    message: 'There is no email'
                 })
             }
         }

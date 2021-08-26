@@ -5,6 +5,7 @@ const cookie = require('cookie-parser')
 const db = require('../lib/db')
 //shortid를 통한 id 생성
 const shortid = require('shortid')
+const bcrypt = require('bcrypt');
 
 module.exports = function(passport){
     router.get('/', (req,res)=>{
@@ -60,16 +61,19 @@ module.exports = function(passport){
             // res.send('error')
             res.redirect('/login/register')
         }else{
-            const user = {
-                id:shortid.generate(),
-                email:email,
-                nickname: nickname,
-                password:password
-            }
-            db.get('users').push(user).write();
-            req.login(user, function(err){
-                return res.redirect('/');
+            bcrypt.hash(password, 10, function(err, hash){
+                const user = {
+                    id:shortid.generate(),
+                    email:email,
+                    nickname: nickname,
+                    password:hash
+                }
+                db.get('users').push(user).write();
+                req.login(user, function(err){
+                    return res.redirect('/');
+                })
             })
+
         }
     })
 
