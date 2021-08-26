@@ -32,23 +32,6 @@ app.use(session({
 
 const passport = require('./lib/passport')(app)
 
-app.post('/login/login_process',
-    passport.authenticate('login', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    })
-)
-
-app.get('/login/logout_process', (req, res) => {
-    req.logout();
-    // req.session.destroy(function(){ // session을 지우는 function
-    //     res.redirect('/')
-    // })
-    req.session.save(function () {
-        res.redirect('/')
-    })
-})
-
 // get 방식만 사용함
 app.get('*',function(request, response, next){
     fs.readdir('./data', function(error , filelist){

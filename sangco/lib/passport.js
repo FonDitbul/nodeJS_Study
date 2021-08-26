@@ -14,12 +14,12 @@ module.exports = function(app) {
     app.use(passport.session())
 
     passport.serializeUser(function (user, done) {
-        console.log('serial', user.email)
+        // console.log('serial', user.email)
         done(null, user.email);
 
     })
     passport.deserializeUser(function (id, done) {
-        console.log('deserialize', id)
+        // console.log('deserialize', id)
         done(null, authData);
     })
 

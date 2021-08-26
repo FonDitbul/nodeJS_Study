@@ -3,8 +3,8 @@ const router = express.Router()
 
 const template = require('../template')
 const cookie = require('cookie-parser')
+const passport = require('passport')
 
-//
 // const authData = {
 //     email:'niki7084@naver.com',
 //     password:'sk7083',
@@ -31,6 +31,23 @@ router.get('/', (req,res)=>{
 
     var templateStr = template.HTML(title, list, tempBody, control)
     res.send(templateStr)
+})
+
+router.post('/login_process',
+    passport.authenticate('login', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    })
+)
+
+router.get('/logout_process', (req, res) => {
+    req.logout();
+    // req.session.destroy(function(){ // session을 지우는 function
+    //     res.redirect('/')
+    // })
+    req.session.save(function () {
+        res.redirect('/')
+    })
 })
 
 
