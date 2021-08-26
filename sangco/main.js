@@ -9,8 +9,10 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const compression = require('compression')
 const helmet = require('helmet')
+
 const session = require('express-session')
-const FileStore = require('session-file-store')(session)
+//session 값 저장을 위한 새로운 store 모듈 설치 필요
+// const FileStore = require('session-file-store')(session) //에러로 인한 삭제
 
 const indexRouter = require('./routes/index')
 const topicRouter = require('./routes/topic')
@@ -22,10 +24,10 @@ app.use(compression())
 app.use(helmet());
 
 app.use(session({
-    secret: 'safafasgasy13256!%!#^',
+    secret: 'sa25sxte5',
     resave: false,
     saveUninitialized: true,
-    store:new FileStore()
+    // store:new FileStore({logFn: function(){}})
 }))
 
 
@@ -42,15 +44,16 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 passport.serializeUser(function(user, done){
-    console.log(user.email)
+    console.log('serial', user.email)
     done(null, user.email);
+
 })
 passport.deserializeUser(function(id, done){
-    console.log('deserial', id)
+    console.log('deserialize', id)
     done(null, authData);
 })
 
-passport.use(new LocalStrategy({
+passport.use('login', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
     },
@@ -73,11 +76,21 @@ passport.use(new LocalStrategy({
 ))
 
 app.post('/login/login_process',
-    passport.authenticate('local', {
+    passport.authenticate('login', {
         successRedirect: '/',
         failureRedirect: '/login'
     })
 )
+
+app.get('/login/logout_process', (req,res)=>{
+    req.logout();
+    // req.session.destroy(function(){ // session을 지우는 function
+    //     res.redirect('/')
+    // })
+    req.session.save(function(){
+        res.redirect('/')
+    })
+})
 
 
 // get 방식만 사용함

@@ -110,10 +110,10 @@ router.post('/update_process', (req, res) => {
 })
 
 router.post('/delete_process',(req,res)=>{
-        if(!auth.isOwner(req,res)){
-            res.redirect('/')
-            return false;
-        }
+        // if(!auth.isOwner(req,res)){
+        //     res.redirect('/')
+        //     return false;
+        // }
         var post = req.body;
         var id = post.id
         var filteredId = path.parse(id).base;

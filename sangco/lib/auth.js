@@ -1,5 +1,6 @@
 module.exports = {
     isOwner:function (req,res) {
+        console.log(req.user, 'auth')
         if(req.user){
             return true
         }else{

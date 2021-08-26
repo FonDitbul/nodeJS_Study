@@ -57,9 +57,13 @@ router.get('/', (req,res)=>{
 //     // console.log(email, password)
 // })
 
-router.get('/logout_process', (req,res)=>{
-    req.session.destroy(function(){
-        res.redirect('/')
-    })
-})
+// router.get('/logout_process', (req,res)=>{
+//     req.logout();
+//     req.session.destroy(function(){ // session을 지우는 function
+//         res.redirect('/')
+//     })
+//     // req.session.save(function(){ //현재 session 상태를 session 폴더에 저장
+//     //     res.redirect('/');
+//     // })
+// })
 module.exports = router;
