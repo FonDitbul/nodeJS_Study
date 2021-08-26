@@ -85,7 +85,7 @@ module.exports = function(passport){
         // req.session.destroy(function(){ // session을 지우는 function
         //     res.redirect('/')
         // })
-        req.session.save(function () {
+        req.session.save(function () { //session 값을 저장함
             res.redirect('/')
         })
     })

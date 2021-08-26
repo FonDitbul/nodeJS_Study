@@ -8,11 +8,8 @@ const sanitizeHtml = require('sanitize-html')
 const fs = require('fs');
 const template = require('../template')
 const auth = require('../lib/auth')
-
-
-// router.use(function(){
-//
-// });
+const db = require('../lib/db')
+const shortid = require('shortid')
 
 
 router.get('/create', (req,res)=> {
@@ -47,13 +44,22 @@ router.post('/create_process', (req,res)=>{
     var title = post.title;
     var description = post.description
 
-    fs.writeFile(`data/${title}`, description, 'utf8',(err)=>{
-        // if (err) throw err;
-        // 파일 생성 저장, 및 302 -> redirection 코드
-        // res.writeHead(302, {Location:`http://localhost:3000/topic/${title}`});
-        // res.end()
-        res.redirect(`/topic/${title}`)
-    })
+    // fs.writeFile(`data/${title}`, description, 'utf8',(err)=>{
+    //     // if (err) throw err;
+    //     // 파일 생성 저장, 및 302 -> redirection 코드
+    //     // res.writeHead(302, {Location:`http://localhost:3000/topic/${title}`});
+    //     // res.end()
+    //     res.redirect(`/topic/${title}`)
+    // })
+    var id = shortid.generate();
+    db.get('topics').push({
+        id:id,
+        title:title,
+        description:description,
+        user_id:req.user.id,
+        user_email:req.user.email
+    }).write();
+    res.redirect(`/topic/${id}`)
 })
 
 
@@ -127,34 +133,38 @@ router.post('/delete_process',(req,res)=>{
 
 
 router.get('/:pageId', function(req, res,next){
-    var filteredId = path.parse(req.params.pageId).base; // base를 통해 상위 디렉토리를 방지하는 코드
-    fs.readFile(`data/${filteredId}`, 'utf8',
-        function(err, data){
-            if(err) next(err); //err 값이 있는 경우 argument가 4개인 미들웨어를 호출하도록 약속
-            let list = template.List(req.list)
-            let title = req.params.pageId;
-            let description = data;
 
-            let sanitizedTitle = sanitizeHtml(title);
-            let sanitzedDescription = sanitizeHtml(description, {
-                allowedTags:['h1']
-            })
+    var topic = db.get('topics').find({id:req.params.pageId}).value();
+    // var filteredId = path.parse(req.params.pageId).base; // base를 통해 상위 디렉토리를 방지하는 코드
+    var user = db.get('users').find({
+        id:topic.user_id
+    }).value();
 
-            let tempBody =`<h2>${sanitizedTitle}</h2>
-                        <p>${sanitzedDescription}</p>`
-            let control = `<a href="/topic/create">create</a> 
+    // if(err) next(err); //err 값이 있는 경우 argument가 4개인 미들웨어를 호출하도록 약속
+    let list = template.List(req.list)
+    // let title = topic.title;
+    // let description = topic.description;
+
+    let sanitizedTitle = sanitizeHtml(topic.title);
+    let sanitzedDescription = sanitizeHtml(topic.description, {
+        allowedTags:['h1']
+    })
+
+    let tempBody =`<h2>${sanitizedTitle}</h2>
+                   <p>${sanitzedDescription}</p>
+                    <p>by ${user.nickname}</p>`
+    let control = `<a href="/topic/create">create</a> 
                         <a href="/topic/update/${sanitizedTitle}">update</a>
                         <form action="/topic/delete_process" method="post">
                             <input type="hidden" name="id" value="${sanitizedTitle}">
                             <input type="submit" value="delete">
                         </form>
                         `
+    var templateStr = template.HTML(sanitizedTitle, list, tempBody, control,
+        auth.statusUI(req,res))
+    res.send(templateStr)
 
-            var templateStr = template.HTML(title, list, tempBody, control,
-                auth.statusUI(req,res))
-            res.send(templateStr)
-        })
-    // return res.send(req.params)
+// return res.send(req.params)
 })
 
 
