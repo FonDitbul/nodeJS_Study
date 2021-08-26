@@ -12,6 +12,9 @@ module.exports = function(passport){
     const db = low(adapter);
     db.defaults({users:[]}).write();
 
+    //shortid를 통한 id 생성
+    const shortid = require('shortid')
+
     router.get('/', (req,res)=>{
         var title = `Login`;
         let list = template.List(req.list)
@@ -61,12 +64,18 @@ module.exports = function(passport){
         var nickname = post.nickname
         var password = post.password;
         var password2 = post.password2
-
-        db.get('users').push({
-            email:email,
-            nickname: nickname,
-            password:password
-        }).write();
+        if(password !== password2){
+            // res.send('error')
+            res.redirect('/login/register')
+        }else{
+            db.get('users').push({
+                id:shortid.generate(),
+                email:email,
+                nickname: nickname,
+                password:password
+            }).write();
+            res.redirect('/');
+        }
     })
 
     router.post('/login_process',
