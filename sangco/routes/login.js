@@ -4,12 +4,12 @@ const router = express.Router()
 const template = require('../template')
 const cookie = require('cookie-parser')
 
-
-const authData = {
-    email:'niki7084@naver.com',
-    password:'sk7083',
-    nickname:'FADFAD'
-}
+//
+// const authData = {
+//     email:'niki7084@naver.com',
+//     password:'sk7083',
+//     nickname:'FADFAD'
+// }
 
 
 router.get('/', (req,res)=>{
