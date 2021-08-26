@@ -13,7 +13,8 @@ const helmet = require('helmet')
 const session = require('express-session')
 //session 값 저장을 위한 새로운 store 모듈 설치 필요
 // const FileStore = require('session-file-store')(session) //에러로 인한 삭제
-
+//session store library
+const LokiStore = require('connect-loki')(session);
 
 
 app.use(cookieParser());
@@ -23,9 +24,10 @@ app.use(helmet());
 
 app.use(session({
     secret: 'sa25sxte5',
-    resave: false,
-    saveUninitialized: true,
-    // store:new FileStore({logFn: function(){}})
+    // resave: false,
+    // saveUninitialized: true,
+    store:new LokiStore({})
+    // store:new FileStore()
 }))
 
 const passport = require('./lib/passport')(app)

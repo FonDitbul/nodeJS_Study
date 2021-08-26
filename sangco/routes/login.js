@@ -1,27 +1,19 @@
+const express = require('express')
+const router = express.Router()
+const template = require('../template')
+const cookie = require('cookie-parser')
+const db = require('../lib/db')
+//shortid를 통한 id 생성
+const shortid = require('shortid')
 
 module.exports = function(passport){
-    const express = require('express')
-    const router = express.Router()
-    const template = require('../template')
-    const cookie = require('cookie-parser')
-
-    //lowdb를 사용하는 방법
-    let low = require('lowdb')
-    const FileSync = require('lowdb/adapters/FileSync')
-    const adapter = new FileSync('db.json')
-    const db = low(adapter);
-    db.defaults({users:[]}).write();
-
-    //shortid를 통한 id 생성
-    const shortid = require('shortid')
-
     router.get('/', (req,res)=>{
         var title = `Login`;
         let list = template.List(req.list)
         let formTag = '' + // post 방식으로 서버에 데이터 전송하는 태그
             '<form action="/login/login_process" method="post">' +
             '   <p><input type="text" name="email" placeholder="ID"></p>' +
-            '   <p><input type="text" name="nickname" placeholder="닉네임"></p>' +
+            // '   <p><input type="text" name="nickname" placeholder="닉네임"></p>' +
             '   <p>'+
             '       <input type="password" name="password" placeholder="password"></input></p>' +
             '   <p>' +
@@ -68,13 +60,16 @@ module.exports = function(passport){
             // res.send('error')
             res.redirect('/login/register')
         }else{
-            db.get('users').push({
+            const user = {
                 id:shortid.generate(),
                 email:email,
                 nickname: nickname,
                 password:password
-            }).write();
-            res.redirect('/');
+            }
+            db.get('users').push(user).write();
+            req.login(user, function(err){
+                return res.redirect('/');
+            })
         }
     })
 
