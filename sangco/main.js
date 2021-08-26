@@ -32,6 +32,11 @@ app.use(session({
 const passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
+app.post('/login/login_process',
+    passport.authenticate('local', {
+        successRedicret: '/',
+        failureRedirect: '/login'
+    }))
 
 
 // get 방식만 사용함
