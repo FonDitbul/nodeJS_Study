@@ -3,11 +3,6 @@ const bcrypt = require('bcrypt');
 
 
 module.exports = function(app) {
-    // const authData = {
-    //     email: 'niki7084@naver.com',
-    //     password: 'sk7083',
-    //     nickname: 'FADFAD'
-    // }
 
     //세션 다음에 passport 가 실행되어야함.
     const passport = require('passport'),
